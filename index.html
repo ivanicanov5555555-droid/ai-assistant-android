@@ -2,80 +2,334 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Мой ИИ-помощник</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      background: #101114;
-      color: white;
-      font-family: Arial, sans-serif;
-    }
-    main {
-      max-width: 600px;
-      margin: auto;
-      padding: 24px 16px;
-    }
-    h1 { font-size: 28px; }
-    p { color: #b7bac4; }
-    #chat {
-      min-height: 250px;
-      padding: 16px;
-      border-radius: 16px;
-      background: #1c1e24;
-      margin: 20px 0;
-    }
-    input, button {
-      padding: 14px;
-      border: 0;
-      border-radius: 12px;
-      font-size: 16px;
-    }
-    input {
-      width: 100%;
-      background: #292c34;
-      color: white;
-      margin-bottom: 10px;
-    }
-    button {
-      width: 100%;
-      background: #ffffff;
-      color: #111111;
-      font-weight: bold;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080808">
+<title>Black Finance</title>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #080808;
+  --panel: #141414;
+  --muted: #8b8b8b;
+  --green: #b8ff70;
+  --red: #ff7777;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: #fff;
+  font-family: Arial, sans-serif;
+}
+main {
+  width: min(100%, 540px);
+  margin: auto;
+  padding: 25px 18px 40px;
+}
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+.brand {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+.tag {
+  color: var(--green);
+  font-size: 11px;
+  border: 1px solid #343f2c;
+  padding: 7px 10px;
+  border-radius: 20px;
+}
+.label {
+  color: var(--muted);
+  font-size: 13px;
+}
+.balance {
+  padding: 24px;
+  background: linear-gradient(140deg, #202020, #111);
+  border: 1px solid #292929;
+  border-radius: 22px;
+}
+.amount {
+  font-size: clamp(30px, 8vw, 42px);
+  font-weight: 700;
+  margin: 12px 0 22px;
+  overflow-wrap: anywhere;
+}
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.stat {
+  padding: 16px;
+  background: var(--panel);
+  border: 1px solid #252525;
+  border-radius: 16px;
+}
+.stat strong {
+  display: block;
+  font-size: 18px;
+  margin-top: 9px;
+  overflow-wrap: anywhere;
+}
+.green { color: var(--green); }
+.red { color: var(--red); }
+.section-title {
+  font-size: 18px;
+  margin: 28px 0 15px;
+}
+form {
+  background: var(--panel);
+  border: 1px solid #252525;
+  padding: 17px;
+  border-radius: 18px;
+}
+input, select, button {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #333;
+  background: #0d0d0d;
+  color: white;
+  font-size: 15px;
+}
+input, select { margin-bottom: 10px; }
+button {
+  background: var(--green);
+  color: #101010;
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
+}
+button:active { opacity: .8; }
+.entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 2px;
+  border-bottom: 1px solid #262626;
+}
+.entry-name { font-weight: 600; }
+.entry-date {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 5px;
+}
+.entry-right { text-align: right; }
+.entry-right button {
+  width: auto;
+  margin-top: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  background: #282828;
+  color: #ddd;
+}
+.empty {
+  color: var(--muted);
+  text-align: center;
+  padding: 22px 0;
+  font-size: 14px;
+}
+footer {
+  text-align: center;
+  color: #626262;
+  font-size: 11px;
+  margin-top: 30px;
+}
+</style>
 </head>
 <body>
-  <main>
-    <h1>✦ Мой ИИ-помощник</h1>
-    <p>Твой личный помощник в одном приложении.</p>
-    <div id="chat">
-      <strong>Помощник</strong>
-      <p>Привет! Скоро мы подключим настоящий искусственный интеллект.</p>
+<main>
+  <header>
+    <div class="brand">BLACK FINANCE<span class="green">.</span></div>
+    <div class="tag">МОИ ФИНАНСЫ</div>
+  </header>
+
+  <section class="balance">
+    <div class="label">Общий баланс</div>
+    <div class="amount" id="balance">0,00 €</div>
+    <div class="label" id="month"></div>
+  </section>
+
+  <section class="stats">
+    <div class="stat">
+      <div class="label">Доходы</div>
+      <strong class="green" id="income">0,00 €</strong>
     </div>
-    <input id="question" placeholder="Напиши своё сообщение...">
-    <button onclick="sendMessage()">Отправить</button>
-  </main>
-  <script>
-    function sendMessage() {
-      const input = document.getElementById('question');
-      const chat = document.getElementById('chat');
-      const question = input.value.trim();
-      if (!question) return;
+    <div class="stat">
+      <div class="label">Расходы</div>
+      <strong class="red" id="expenses">0,00 €</strong>
+    </div>
+  </section>
 
-      const message = document.createElement('p');
-      message.textContent = 'Ты: ' + question;
-      chat.appendChild(message);
+  <h2 class="section-title">Новая операция</h2>
+  <form id="form">
+    <input id="title" placeholder="Название операции" maxlength="60" required>
+    <input id="amount" type="number" placeholder="Сумма" min="0.01"
+      max="100000000" step="0.01" inputmode="decimal" required>
+    <select id="type">
+      <option value="expense">Расход</option>
+      <option value="income">Доход</option>
+    </select>
+    <select id="category">
+      <option>Продукты</option>
+      <option>Транспорт</option>
+      <option>Покупки</option>
+      <option>Дом</option>
+      <option>Развлечения</option>
+      <option>Зарплата</option>
+      <option>Другое</option>
+    </select>
+    <button type="submit">+ Добавить операцию</button>
+  </form>
 
-      const reply = document.createElement('p');
-      reply.textContent =
-        'Сообщение принято! Настоящий ИИ подключим на следующем этапе.';
-      chat.appendChild(reply);
+  <h2 class="section-title">История операций</h2>
+  <section id="history">
+    <div class="empty">Здесь появятся твои операции.</div>
+  </section>
 
-      input.value = '';
-    }
-  </script>
+  <footer>BLACK FINANCE · ТВОИ ДЕНЬГИ ПОД КОНТРОЛЕМ</footer>
+</main>
+
+<script>
+const money = value => new Intl.NumberFormat('ru-RU', {
+  style: 'currency',
+  currency: 'EUR'
+}).format(value);
+
+let operations = [];
+try {
+  const saved = localStorage.getItem('black-finance-operations');
+  const parsed = saved ? JSON.parse(saved) : [];
+  if (Array.isArray(parsed)) {
+    operations = parsed.filter(x =>
+      x && typeof x.id === 'string' &&
+      typeof x.title === 'string' &&
+      Number.isFinite(x.amount) && x.amount > 0 &&
+      (x.type === 'income' || x.type === 'expense') &&
+      typeof x.category === 'string' &&
+      typeof x.date === 'string'
+    ).slice(0, 500);
+  }
+} catch (_) {}
+
+document.getElementById('month').textContent =
+  new Date().toLocaleDateString('ru-RU', {
+    month: 'long', year: 'numeric'
+  });
+
+function save() {
+  try {
+    localStorage.setItem(
+      'black-finance-operations', JSON.stringify(operations)
+    );
+    return true;
+  } catch (_) {
+    alert('Не удалось сохранить данные на этом устройстве.');
+    return false;
+  }
+}
+
+function render() {
+  const income = operations
+    .filter(x => x.type === 'income')
+    .reduce((sum, x) => sum + x.amount, 0);
+  const expenses = operations
+    .filter(x => x.type === 'expense')
+    .reduce((sum, x) => sum + x.amount, 0);
+
+  document.getElementById('balance').textContent = money(income - expenses);
+  document.getElementById('income').textContent = money(income);
+  document.getElementById('expenses').textContent = money(expenses);
+
+  const history = document.getElementById('history');
+  history.replaceChildren();
+
+  if (!operations.length) {
+    const empty = document.createElement('div');
+    empty.className = 'empty';
+    empty.textContent = 'Здесь появятся твои операции.';
+    history.appendChild(empty);
+    return;
+  }
+
+  [...operations].reverse().forEach(op => {
+    const row = document.createElement('div');
+    row.className = 'entry';
+
+    const info = document.createElement('div');
+    const name = document.createElement('div');
+    name.className = 'entry-name';
+    name.textContent = op.title;
+
+    const date = document.createElement('div');
+    date.className = 'entry-date';
+    date.textContent = op.category + ' · ' + op.date;
+
+    info.append(name, date);
+
+    const right = document.createElement('div');
+    right.className = 'entry-right';
+
+    const amount = document.createElement('div');
+    amount.className = op.type === 'income' ? 'green' : 'red';
+    amount.textContent =
+      (op.type === 'income' ? '+' : '−') + money(op.amount);
+
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.textContent = 'Удалить';
+    remove.addEventListener('click', () => {
+      if (!confirm('Удалить эту операцию?')) return;
+      operations = operations.filter(x => x.id !== op.id);
+      if (save()) render();
+    });
+
+    right.append(amount, remove);
+    row.append(info, right);
+    history.appendChild(row);
+  });
+}
+
+document.getElementById('form').addEventListener('submit', event => {
+  event.preventDefault();
+
+  const title = document.getElementById('title').value.trim();
+  const amount = Number(document.getElementById('amount').value);
+  const type = document.getElementById('type').value;
+  const category = document.getElementById('category').value;
+
+  if (!title || !Number.isFinite(amount) ||
+      amount <= 0 || amount > 100000000) {
+    alert('Проверь название и сумму операции.');
+    return;
+  }
+
+  const operation = {
+    id: Date.now().toString() + Math.random().toString(36).slice(2),
+    title, amount, type, category,
+    date: new Date().toLocaleDateString('ru-RU')
+  };
+
+  operations.push(operation);
+  if (operations.length > 500) operations = operations.slice(-500);
+
+  if (save()) {
+    render();
+    event.target.reset();
+  } else {
+    operations.pop();
+  }
+});
+
+render();
+</script>
 </body>
 </html>
